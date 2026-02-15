@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Eden Alpha Plays</title>
+
+<style>
+body {
+  margin:0;
+  overflow:hidden;
+  background:black;
+  font-family:Arial;
+}
+
+h1 {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  color:white;
+  font-size:4rem;
+  letter-spacing:4px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>EDEN ALPHA PLAYS</h1>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);
+const renderer = new THREE.WebGLRenderer({alpha:true});
+
+renderer.setSize(innerWidth,innerHeight);
+document.body.appendChild(renderer.domElement);
+camera.position.z = 5;
+
+let bolts=[];
+
+function lightning(){
+  const points=[];
+  for(let i=0;i<25;i++){
+    points.push(new THREE.Vector3(
+      (Math.random()-0.5)*8,
+      (Math.random()-0.5)*5,
+      0
+    ));
+  }
+
+  const geo=new THREE.BufferGeometry().setFromPoints(points);
+  const mat=new THREE.LineBasicMaterial({color:0x00ffff});
+  const bolt=new THREE.Line(geo,mat);
+
+  scene.add(bolt);
+  bolts.push(bolt);
+}
+
+function animate(){
+  requestAnimationFrame(animate);
+
+  if(Math.random()>0.93){
+    lightning();
+  }
+
+  bolts.forEach((b,i)=>{
+    b.material.opacity-=0.03;
+    b.material.transparent=true;
+
+    if(b.material.opacity<=0){
+      scene.remove(b);
+      bolts.splice(i,1);
+    }
+  });
+
+  renderer.render(scene,camera);
+}
+
+animate();
+</script>
+
+</body>
+</html>
